@@ -15,7 +15,7 @@ To recreate this project with the same configuration:
 
 ```sh
 # recreate this project
-pnpm dlx sv create --template minimal --types ts --add vitest="usages:unit,component" prettier eslint tailwindcss="plugins:typography" drizzle="database:postgresql+postgresql:postgres.js+docker:yes" --install pnpm globe-game
+pnpm dlx sv create --template minimal --types ts --add vitest="usages:unit,component" prettier eslint drizzle="database:postgresql+postgresql:postgres.js+docker:yes" --install pnpm globe-game
 ```
 
 ## Developing

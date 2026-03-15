@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Country } from '$lib/data';
-	import maplibregl from 'maplibre-gl';
+  import maplibregl from 'maplibre-gl';
   import { onMount } from 'svelte';
   import {
     BackgroundLayer,
@@ -17,17 +17,22 @@
     code: '',
     name: '',
     p1: { x: -1, y: -1 },
-    p3: { x: -1, y: -1 }
+    p3: { x: -1, y: -1 },
   } as Country;
+  let countries = $state([] as Country[]);
+
+  // settings
+  let showScale = $state(true);
+  let smoothPan = $state(false);
+
+  let currentCountry = $state(-1);
+  let remainings = $state([] as number[]);
   let country = $state(emptyCountry);
-  let cnt = $state(-1);
-  let region = $state('Asia');
-  let countries = [] as Country[];
-  let showCountry = $state(false);
+  let showAll = $state(true);
+  let won = $state(false);
 
   onMount(async () => {
     await getCountries();
-    showCountry = true;
   });
 
   const getCountries = async () => {
@@ -39,83 +44,177 @@
     });
 
     countries = await response.json();
+    remainings = Array.from(countries.keys());
     return countries;
-  }
+  };
 
   let map: maplibregl.Map | undefined = $state.raw();
 
-  async function getNextCountry() {
-    cnt += 1;
-    country = (await getCountries())[cnt];
-    if (country.code) {
-      map?.fitBounds([country.p1.x, country.p1.y, country.p3.x, country.p3.y])
-    }
-    showCountry = false;
-  }
-
-  async function getPreviousCountry() {
-    cnt -= 1;
-    country = (await getCountries())[cnt];
-    if (country.code) {
-      map?.fitBounds([country.p1.x, country.p1.y, country.p3.x, country.p3.y])
-    }
-    showCountry = false;
-  }
-
   async function setRandomCountry() {
-    country = countries[Math.floor(Math.random() * countries.length)];
+    currentCountry = remainings[Math.floor(Math.random() * remainings.length)];
+    country = countries[currentCountry];
     if (country.code) {
-      map?.fitBounds([country.p1.x, country.p1.y, country.p3.x, country.p3.y])
+      if (smoothPan) {
+        map?.fitBounds([country.p1.x, country.p1.y, country.p3.x, country.p3.y]);
+      } else {
+        map?.fitBounds([country.p1.x, country.p1.y, country.p3.x, country.p3.y], { duration: 0});
+      }
     }
-    showCountry = false;
   }
-  function clearCountry() {
+
+  function reset() {
+    currentCountry = -1;
+    remainings = Array.from(countries.keys());;
     country = emptyCountry;
-    showCountry = false;
+    showAll = true;
+    won = false;
   }
-  function showCountryName() {
-    showCountry = true;
+
+  function showRandomCountry() {
+    showAll = false;
+    setRandomCountry();
+  }
+
+  function reveal() {
+    showAll = true;
+  }
+
+  function correct() {
+    const index = remainings.indexOf(currentCountry);
+    if (index > -1) {
+      remainings.splice(index, 1);
+    }
+    if (remainings.length == 0) {
+      reset();
+      won = true;
+      return;
+    }
+    showRandomCountry();
+  }
+
+  function wrong() {
+    won = false;
+    showRandomCountry();
   }
 </script>
 
-{#if showCountry}
-<h>Showing {country.name ? country.name : 'no country'}</h>
-{/if}
-<div>
-  <button onclick={setRandomCountry}>Show random country</button>
-  <button onclick={clearCountry}>Show all countries</button>
-  <button onclick={showCountryName}>Show country name</button>
+<div class="pure-g">
+  <div class="pure-u-1-1">
+    <h1>Country Guesser</h1>
+  </div>
+  <div class="pure-u-1-1">
+    <h3>remaining {remainings.length} / {countries.length}</h3>
+  </div>
+  <div class="pure-u-1-1">
+    {#if country.name && showAll}
+      <h>Showing {country.name}</h>
+    {/if}
+  </div>
 </div>
-<div>
-  <p>{cnt}</p>
-  <button onclick={getPreviousCountry}>Prev</button>
-  <button onclick={getNextCountry}>Next</button>
-</div>
-33
-<MapLibre class="h-[75vh] min-h-[300px]" zoom={2} globalState={{ country: country.code, region: region }} bind:map>
+<MapLibre
+  inlineStyle="min-height:300px; height: 75vh;"
+  zoom={1.5}
+  globalState={{ country: country.code }}
+  bind:map
+>
   <Projection type="globe" />
   <NavigationControl />
-  <ScaleControl />
+  {#if showScale}
+    <ScaleControl />
+  {/if}
 
-  <BackgroundLayer id="background" paint={{ 'background-color': '#0073e6', 'background-opacity': 0.01 }} />
-  {#if showCountry}
-  <VectorTileSource url="http://localhost:3000/countries">
-    <FillLayer sourceLayer="countries" paint={{ 'fill-color': '#89ce00', 'fill-opacity': 0.3 }} filter={[
-        'case',
-        ['==', ['to-string', ['global-state', 'country']], ''],
-        true,
-        ['!=', ['get', 'code'], ['global-state', 'country']]
-    ]}/>
-  </VectorTileSource>
+  <BackgroundLayer
+    id="background"
+    paint={{ 'background-color': '#0073e6', 'background-opacity': 0.01 }}
+  />
+  {#if showAll}
+    <VectorTileSource url="http://localhost:3000/countries">
+      <FillLayer
+        sourceLayer="countries"
+        paint={{ 'fill-color': '#89ce00', 'fill-opacity': 0.3 }}
+        filter={[
+          'case',
+          ['==', ['to-string', ['global-state', 'country']], ''],
+          true,
+          ['!=', ['get', 'code'], ['global-state', 'country']],
+        ]}
+      />
+    </VectorTileSource>
   {/if}
   {#if country.name}
-  <VectorTileSource url="http://localhost:3000/countries">
-    <FillLayer sourceLayer="countries" paint={{ 'fill-color': '#b51963' }} filter={[
-        'case',
-        ['==', ['to-string', ['global-state', 'country']], ''],
-        true,
-        ['==', ['get', 'code'], ['global-state', 'country']]
-    ]} />
-  </VectorTileSource>
+    <VectorTileSource url="http://localhost:3000/countries">
+      <FillLayer
+        sourceLayer="countries"
+        paint={{ 'fill-color': '#b51963' }}
+        filter={[
+          'case',
+          ['==', ['to-string', ['global-state', 'country']], ''],
+          true,
+          ['==', ['get', 'code'], ['global-state', 'country']],
+        ]}
+      />
+    </VectorTileSource>
   {/if}
 </MapLibre>
+<div class="pure-g">
+  {#if !won}
+    {#if country.name && !showAll}
+      <div class="pure-u-1-1">
+        <button class="pure-button button-secondary" style="width:100%" onclick={reveal}
+          >Reveal</button
+        >
+      </div>
+    {/if}
+    {#if country.name && showAll}
+      <div class="pure-u-1-2">
+        <button class="pure-button button-success" style="width:100%" onclick={correct}
+          >Correct</button
+        >
+      </div>
+      <div class="pure-u-1-2">
+        <button class="pure-button button-error" style="width:100%" onclick={wrong}>Wrong</button>
+      </div>
+    {/if}
+    {#if currentCountry < 0}
+      <div class="pure-u-1-1">
+        <button class="pure-button button-secondary" style="width:100%" onclick={showRandomCountry}
+          >Random Country</button
+        >
+      </div>
+    {/if}
+  {:else}
+    <div class="pure-u-1-1">
+      <p>Congrats! You won!!</p>
+    </div>
+    <div class="pure-u-1-1">
+      <button class="pure-button button-secondary" style="width:100%" onclick={reset}
+        >Play Again</button
+      >
+    </div>
+  {/if}
+</div>
+
+<style>
+  .button-success,
+  .button-error,
+  .button-secondary {
+    color: white;
+    border-radius: 4px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  }
+
+  .button-success {
+    background: rgb(51, 117, 56);
+    /* this is a green */
+  }
+
+  .button-error {
+    background: rgb(220, 105, 125);
+    /* this is a maroon */
+  }
+
+  .button-secondary {
+    background: rgb(66, 184, 221);
+    /* this is a light blue */
+  }
+</style>
