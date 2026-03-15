@@ -6,7 +6,9 @@ export async function getAllCountries(): Promise<Country[]> {
     return await db.select({
         id: country.gid,
         code: country.code,
-        name: country.name
+        name: country.name,
+        p1: country.p1,
+        p3: country.p3
     }).from(country)
     .where(eq(country.type, 'ADM0'));
 }
@@ -15,7 +17,9 @@ export async function getAllCountriesInCode(regionCode: number): Promise<Country
     return await db.select({
         id: country.gid,
         code: country.code,
-        name: country.name
+        name: country.name,
+        p1: country.p1,
+        p3: country.p3
     }).from(country)
     .where(and(or(eq(country.regionCode, regionCode), eq(country.subregionCode, regionCode)), eq(country.type, 'ADM0')));
 }

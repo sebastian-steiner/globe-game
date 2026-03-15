@@ -1,4 +1,4 @@
-import { pgTable, serial, integer, text, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, serial, integer, text, boolean, geometry } from 'drizzle-orm/pg-core';
 
 export const country = pgTable('countries', {
 	gid: serial('gid').primaryKey(),
@@ -9,5 +9,7 @@ export const country = pgTable('countries', {
 	regionCode: integer('regioncode'),
 	subregion: text('subregion'),
 	subregionCode: integer('subregioncode'),
-	island: boolean('islandstate')
+	island: boolean('islandstate'),
+	p1: geometry('p1', { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
+	p3: geometry('p3', { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
 });

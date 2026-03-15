@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      maplibre-gl:
+        specifier: ^5.17.0
+        version: 5.17.0
       postgres:
         specifier: ^3.4.8
         version: 3.4.8
