@@ -11,6 +11,7 @@
     ScaleControl,
     Projection,
   } from 'svelte-maplibre-gl';
+  import { staticCountries } from '$lib/data/countries';
 
   const emptyCountry = {
     id: 0,
@@ -39,11 +40,8 @@
     if (countries.length != 0) {
       return countries;
     }
-    const response = await fetch('/api/countries', {
-      method: 'GET',
-    });
 
-    countries = await response.json();
+    countries = staticCountries;
     remainings = Array.from(countries.keys());
     return countries;
   };
@@ -128,7 +126,7 @@
     paint={{ 'background-color': '#0073e6', 'background-opacity': 0.01 }}
   />
   {#if showAll}
-    <VectorTileSource url="http://localhost:3000/countries">
+    <VectorTileSource url="https://countries.sebastian-steiner.at/services/countries">
       <FillLayer
         sourceLayer="countries"
         paint={{ 'fill-color': '#89ce00', 'fill-opacity': 0.3 }}
@@ -142,7 +140,7 @@
     </VectorTileSource>
   {/if}
   {#if country.name}
-    <VectorTileSource url="http://localhost:3000/countries">
+    <VectorTileSource url="https://countries.sebastian-steiner.at/services/countries">
       <FillLayer
         sourceLayer="countries"
         paint={{ 'fill-color': '#b51963' }}
@@ -205,16 +203,13 @@
 
   .button-success {
     background: rgb(51, 117, 56);
-    /* this is a green */
   }
 
   .button-error {
     background: rgb(220, 105, 125);
-    /* this is a maroon */
   }
 
   .button-secondary {
     background: rgb(66, 184, 221);
-    /* this is a light blue */
   }
 </style>
