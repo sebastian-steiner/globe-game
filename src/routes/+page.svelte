@@ -55,14 +55,14 @@
       if (smoothPan) {
         map?.fitBounds([country.p1.x, country.p1.y, country.p3.x, country.p3.y]);
       } else {
-        map?.fitBounds([country.p1.x, country.p1.y, country.p3.x, country.p3.y], { duration: 0});
+        map?.fitBounds([country.p1.x, country.p1.y, country.p3.x, country.p3.y], { duration: 0 });
       }
     }
   }
 
   function reset() {
     currentCountry = -1;
-    remainings = Array.from(countries.keys());;
+    remainings = Array.from(countries.keys());
     country = emptyCountry;
     showAll = true;
     won = false;
