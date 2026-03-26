@@ -82,7 +82,7 @@ body {
 .globe-region {
   flex: 1 1 0;
   min-height: 0; /* prevents flex child from overflowing vertically */
-  min-width: 0;  /* prevents flex child from overflowing horizontally */
+  min-width: 0; /* prevents flex child from overflowing horizontally */
   position: relative;
   overflow: hidden; /* clips any MapLibre controls to the container bounds */
 }

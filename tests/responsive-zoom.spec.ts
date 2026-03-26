@@ -24,10 +24,7 @@ function expectedZoom(width: number, height: number): number {
  * Returns once map is idle so zoom reading is stable.
  */
 async function waitForMap(page: import('@playwright/test').Page) {
-  await page.waitForFunction(
-    () => !!window.__maplibreMap,
-    { timeout: 15_000 },
-  );
+  await page.waitForFunction(() => !!window.__maplibreMap, { timeout: 15_000 });
 }
 
 /** Read the current map zoom via the exposed window.__maplibreMap. */

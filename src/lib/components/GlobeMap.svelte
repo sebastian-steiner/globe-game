@@ -86,7 +86,11 @@
   but cannot touch the parent, so our sizing wrapper is safe.
   width:100%;height:100% on <MapLibre> then fills the wrapper correctly.
 -->
-<div style="position:absolute;inset:0;" bind:clientWidth={containerWidth} bind:clientHeight={containerHeight}>
+<div
+  style="position:absolute;inset:0;"
+  bind:clientWidth={containerWidth}
+  bind:clientHeight={containerHeight}
+>
   <MapLibre
     inlineStyle="width:100%;height:100%;"
     zoom={initialZoom}
