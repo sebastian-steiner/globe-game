@@ -54,7 +54,7 @@
 
     // Expose map instance for e2e test access
     if (typeof window !== 'undefined' && map) {
-      (window as any).__maplibreMap = map;
+      window.__maplibreMap = map;
     }
   }
 

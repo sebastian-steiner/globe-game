@@ -25,6 +25,26 @@ export default defineConfig(
       'no-undef': 'off',
     },
   },
+  // ── Strict TypeScript rules for .ts / .svelte files ──────────────
+  {
+    files: ['**/*.ts', '**/*.svelte', '**/*.svelte.ts'],
+    rules: {
+      // Ban all forms of `any` — `x: any`, `as any`, function params, etc.
+      '@typescript-eslint/no-explicit-any': 'error',
+
+      // Prefer `as const` or inline types over `as SomeType` assertions
+      '@typescript-eslint/consistent-type-assertions': [
+        'error',
+        { assertionStyle: 'as', objectLiteralTypeAssertions: 'never' },
+      ],
+
+      // Enforce exhaustive switches with discriminated unions
+      '@typescript-eslint/switch-exhaustiveness-check': 'off',
+
+      // Prevent accidental floating (unhandled) promises
+      'no-void': ['error', { allowAsStatement: true }],
+    },
+  },
   {
     files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
     languageOptions: {
