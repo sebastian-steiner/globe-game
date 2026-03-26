@@ -4,7 +4,7 @@ import { waitForGameReady } from './helpers';
 /** Parse "X / Y remaining" → X */
 async function getRemaining(page: import('@playwright/test').Page): Promise<number> {
   const text = await page.getByTestId('progress-badge').innerText();
-  return parseInt(text.trim().split('/')[0].trim());
+  return parseInt(text.trim().split('/')[0]?.trim() ?? '0');
 }
 
 test.describe('Wrong answer', () => {

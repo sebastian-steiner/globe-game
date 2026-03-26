@@ -25,7 +25,7 @@ function expectedZoom(width: number, height: number): number {
  */
 async function waitForMap(page: import('@playwright/test').Page) {
   await page.waitForFunction(
-    () => !!(window as any).__maplibreMap,
+    () => !!window.__maplibreMap,
     { timeout: 15_000 },
   );
 }
@@ -33,9 +33,9 @@ async function waitForMap(page: import('@playwright/test').Page) {
 /** Read the current map zoom via the exposed window.__maplibreMap. */
 async function getMapZoom(page: import('@playwright/test').Page): Promise<number> {
   return page.evaluate(() => {
-    const map = (window as any).__maplibreMap;
+    const map = window.__maplibreMap;
     if (!map) throw new Error('Map instance not found on window');
-    return map.getZoom() as number;
+    return map.getZoom();
   });
 }
 
@@ -155,7 +155,8 @@ test.describe('Responsive zoom — user interaction', () => {
 
     // Get center before drag
     const centerBefore = await page.evaluate(() => {
-      const map = (window as any).__maplibreMap;
+      const map = window.__maplibreMap;
+      if (!map) throw new Error('Map instance not found on window');
       const c = map.getCenter();
       return { lng: c.lng, lat: c.lat };
     });
@@ -179,7 +180,8 @@ test.describe('Responsive zoom — user interaction', () => {
     await page.waitForTimeout(500);
 
     const centerAfter = await page.evaluate(() => {
-      const map = (window as any).__maplibreMap;
+      const map = window.__maplibreMap;
+      if (!map) throw new Error('Map instance not found on window');
       const c = map.getCenter();
       return { lng: c.lng, lat: c.lat };
     });

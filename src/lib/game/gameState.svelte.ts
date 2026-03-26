@@ -48,7 +48,7 @@ export class GameState {
   async init() {
     if (this.countries.length > 0) return;
     // Allow Playwright e2e tests to inject a small country list via window.__e2e_countries__
-    const override = (typeof window !== 'undefined' && (window as any).__e2e_countries__) || null;
+    const override = (typeof window !== 'undefined' && window.__e2e_countries__) || null;
     this.countries = override ?? staticCountries;
     this.remainings = Array.from(this.countries.keys());
   }
@@ -65,8 +65,9 @@ export class GameState {
 
   private pickRandom() {
     const idx = this.remainings[Math.floor(Math.random() * this.remainings.length)];
+    if (idx === undefined) return;
     this.currentIndex = idx;
-    this.panToCountry(this.countries[idx]);
+    this.panToCountry(this.countries[idx]!);
   }
 
   start() {
