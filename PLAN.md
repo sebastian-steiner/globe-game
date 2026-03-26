@@ -69,10 +69,10 @@
 
 ## Progress
 
-| Phase | Status |
-|-------|--------|
-| 1 — Responsive Layout | ✅ Done |
-| 2 — Component Extraction | ✅ Done |
-| 3 — Game Logic Extraction | ✅ Done |
-| 4 — Playwright E2E Tests | ✅ Done |
-| 5 — Settings Panel | ⬜ Not started |
+| Phase                     | Status         |
+| ------------------------- | -------------- |
+| 1 — Responsive Layout     | ✅ Done        |
+| 2 — Component Extraction  | ✅ Done        |
+| 3 — Game Logic Extraction | ✅ Done        |
+| 4 — Playwright E2E Tests  | ✅ Done        |
+| 5 — Settings Panel        | ⬜ Not started |
