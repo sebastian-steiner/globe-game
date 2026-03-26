@@ -40,7 +40,7 @@ export async function waitForGameReady(page: Page) {
     const text = badge.textContent ?? '';
     const match = text.match(/(\d+)\s*\/\s*(\d+)/);
     if (!match) return false;
-    const n = parseInt(match[1]);
+    const n = parseInt(match[1] ?? '0');
     return n > 0;
   });
 }

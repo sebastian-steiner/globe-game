@@ -23,7 +23,7 @@ test.describe('Win condition', () => {
   test.beforeEach(async ({ page }) => {
     // Inject a small 3-country list before the game initialises
     await page.addInitScript((countries) => {
-      (window as any).__e2e_countries__ = countries;
+      window.__e2e_countries__ = countries;
     }, testCountries);
 
     await page.goto('/');

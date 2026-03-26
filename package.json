@@ -10,6 +10,7 @@
     "prepare": "svelte-kit sync || echo ''",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && eslint --no-warn-ignored '**/*.{ts,svelte}' --rule '{\"@typescript-eslint/no-explicit-any\": \"error\"}'",
     "test:unit": "vitest",
     "test": "npm run test:unit -- --run",
     "test:e2e": "playwright test",
