@@ -12,6 +12,13 @@ export class GameState {
   /** Settings */
   smoothPan = $state(false);
   showScale = $state(true);
+  limitRevealZoom = $state(false);
+
+  /**
+   * Number of zoom levels to pull back when limitRevealZoom is on.
+   * Applied after fitBounds so the country is shown with surrounding context.
+   */
+  private readonly REVEAL_ZOOM_OUT_DELTA = 2;
 
   /** Reference to the MapLibre map instance (set via bind:map on GlobeMap) */
   map = $state.raw<maplibregl.Map | undefined>(undefined);
@@ -56,11 +63,19 @@ export class GameState {
   private panToCountry(c: Country) {
     if (!c.code || !this.map) return;
     const bounds: [number, number, number, number] = [c.p1.x, c.p1.y, c.p3.x, c.p3.y];
+    const opts: maplibregl.FitBoundsOptions = { duration: 0 };
     if (this.smoothPan) {
-      this.map.fitBounds(bounds);
-    } else {
-      this.map.fitBounds(bounds, { duration: 0 });
+      delete opts.duration;
     }
+    this.map.fitBounds(bounds, opts);
+  }
+
+  /** Zoom out by the reveal delta so the country is shown with surrounding context. */
+  private zoomOutForReveal() {
+    if (!this.map) return;
+    const currentZoom = this.map.getZoom();
+    const targetZoom = Math.max(0, currentZoom - this.REVEAL_ZOOM_OUT_DELTA);
+    this.map.setZoom(targetZoom);
   }
 
   private pickRandom() {
@@ -77,6 +92,19 @@ export class GameState {
 
   reveal() {
     this.showAll = true;
+    if (this.limitRevealZoom) {
+      this.zoomOutForReveal();
+    }
+  }
+
+  /** Reset the view to the current country bounds (or initial zoom if idle). */
+  resetView() {
+    if (!this.map) return;
+    if (this.currentIndex >= 0) {
+      this.panToCountry(this.country);
+    } else {
+      this.map.flyTo({ center: [0, 20], zoom: 1.5, duration: 0 });
+    }
   }
 
   correct() {
