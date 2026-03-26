@@ -1,1 +1,228 @@
-@import 'purecss';
+/* ─── Reset & base ───────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── Design tokens ─────────────────────────────────────────────── */
+:root {
+  --color-bg: #0d1117;
+  --color-surface: #161b22;
+  --color-border: #30363d;
+  --color-text: #e6edf3;
+  --color-text-muted: #8b949e;
+
+  --color-primary: #42b8dd;
+  --color-success: #2ea043;
+  --color-danger: #da3633;
+  --color-badge-bg: #21262d;
+
+  --header-height: 3.25rem;
+  --solution-height: 2.75rem;
+  --bar-height: 3.5rem;
+  --bar-gap: 0.5rem;
+
+  --radius: 6px;
+  --font: system-ui, -apple-system, sans-serif;
+}
+
+/* ─── Viewport shell ────────────────────────────────────────────── */
+html,
+body {
+  height: 100%;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font);
+  font-size: 1rem;
+  line-height: 1.5;
+  overflow: hidden; /* no page scroll — globe owns the space */
+}
+
+/* layout root rendered by +layout.svelte */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh; /* dynamic viewport height handles mobile toolbars */
+}
+
+/* ─── Header ────────────────────────────────────────────────────── */
+.game-header {
+  flex: 0 0 var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  gap: 0.75rem;
+}
+
+.game-header h1 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.progress-badge {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background: var(--color-badge-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 2rem;
+  padding: 0.15rem 0.7rem;
+  white-space: nowrap;
+}
+
+/* ─── Globe ─────────────────────────────────────────────────────── */
+.globe-region {
+  flex: 1 1 0;
+  min-height: 0; /* critical — prevents flex child from overflowing */
+  position: relative;
+}
+
+/* MapLibre must fill its container */
+.globe-region :global(.maplibregl-map) {
+  width: 100%;
+  height: 100%;
+}
+
+/* ─── Solution strip ────────────────────────────────────────────── */
+.solution-strip {
+  flex: 0 0 var(--solution-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  font-size: 1rem;
+  font-weight: 500;
+  gap: 0.4rem;
+}
+
+.solution-strip .label {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.solution-strip .country-name {
+  color: var(--color-text);
+}
+
+.solution-strip.hidden-solution {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+/* ─── Button bar ────────────────────────────────────────────────── */
+.action-bar {
+  flex: 0 0 var(--bar-height);
+  display: flex;
+  align-items: stretch;
+  gap: var(--bar-gap);
+  padding: 0.4rem var(--bar-gap);
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+.action-bar button {
+  flex: 1;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fff;
+  transition: filter 0.15s;
+}
+
+.action-bar button:hover {
+  filter: brightness(1.12);
+}
+
+.action-bar button:active {
+  filter: brightness(0.9);
+}
+
+.btn-reveal {
+  background: var(--color-primary);
+}
+
+.btn-correct {
+  background: var(--color-success);
+}
+
+.btn-wrong {
+  background: var(--color-danger);
+}
+
+.btn-start,
+.btn-again {
+  background: var(--color-primary);
+}
+
+/* ─── Win overlay ───────────────────────────────────────────────── */
+.win-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: rgba(13, 17, 23, 0.82);
+  backdrop-filter: blur(4px);
+  z-index: 10;
+}
+
+.win-overlay h2 {
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.win-overlay p {
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.win-overlay button {
+  padding: 0.6rem 2rem;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+
+.win-overlay button:hover {
+  filter: brightness(1.12);
+}
+
+/* ─── Mobile ────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  :root {
+    --header-height: 2.75rem;
+    --solution-height: 2.5rem;
+    --bar-height: 3.25rem;
+  }
+
+  .game-header h1 {
+    font-size: 0.95rem;
+  }
+
+  .progress-badge {
+    font-size: 0.78rem;
+  }
+
+  .action-bar button {
+    font-size: 0.82rem;
+  }
+}
