@@ -35,14 +35,10 @@ describe('/settings/+page.svelte', () => {
       .element(page.getByText('Display the map scale control on the globe'))
       .toBeInTheDocument();
     await expect
-      .element(
-        page.getByText('Always show every country on the globe behind the highlighted one'),
-      )
+      .element(page.getByText('Always show every country on the globe behind the highlighted one'))
       .toBeInTheDocument();
     await expect
-      .element(
-        page.getByText('Zoom out to show surrounding countries when revealing the solution'),
-      )
+      .element(page.getByText('Zoom out to show surrounding countries when revealing the solution'))
       .toBeInTheDocument();
   });
 
