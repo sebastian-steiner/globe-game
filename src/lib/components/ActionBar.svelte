@@ -10,13 +10,28 @@
     onreveal: () => void;
     oncorrect: () => void;
     onwrong: () => void;
+    onselectcontinent: () => void;
   }
-  let { idle, guessing, revealed, onstart, onreveal, oncorrect, onwrong }: Props = $props();
+  let {
+    idle,
+    guessing,
+    revealed,
+    onstart,
+    onreveal,
+    oncorrect,
+    onwrong,
+    onselectcontinent,
+  }: Props = $props();
 </script>
 
 <div class="action-bar" data-testid="action-bar">
   {#if idle}
     <button class="btn-start" onclick={onstart} data-testid="btn-start">Start</button>
+    <button
+      class="btn-goto-select-continent"
+      onclick={onselectcontinent}
+      data-testid="btn-goto-select-continent">Continent Mode</button
+    >
   {:else if guessing}
     <button class="btn-reveal" onclick={onreveal} data-testid="btn-reveal">Reveal</button>
   {:else if revealed}

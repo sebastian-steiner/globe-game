@@ -1,13 +1,16 @@
-import type { Country } from '$lib/data';
+import type { Continent, Country } from '$lib/data';
 import maplibregl from 'maplibre-gl';
-import { staticCountries } from '$lib/data/countries';
 
 export class GameState {
   countries = $state<Country[]>([]);
+  continents = $state<Continent[]>([]);
   remainings = $state<number[]>([]);
   currentIndex = $state(-1);
   showAll = $state(true);
   won = $state(false);
+  selectingContinent = $state(false);
+  total = $state<number>(0);
+  continent = $state<string | undefined>(undefined);
 
   /** Settings */
   smoothPan = $state(false);
@@ -52,12 +55,29 @@ export class GameState {
     return this.currentIndex >= 0;
   }
 
+  get isSelectingContinent(): boolean {
+    return this.selectingContinent;
+  }
+
+  async getCountries(): Promise<Country[]> {
+    const res = await fetch('/data/countries.json');
+    return (await res.json()) as Country[];
+  }
+
+  async getContinents() {
+    const res = await fetch('/data/continents.json');
+    return (await res.json()) as Continent[];
+  }
+
   async init() {
     if (this.countries.length > 0) return;
     // Allow Playwright e2e tests to inject a small country list via window.__e2e_countries__
-    const override = (typeof window !== 'undefined' && window.__e2e_countries__) || null;
-    this.countries = override ?? staticCountries;
+    const overrideCountries = (typeof window !== 'undefined' && window.__e2e_countries__) || null;
+    const overrideContinents = (typeof window !== 'undefined' && window.__e2e_continents__) || null;
+    this.countries = overrideCountries ?? (await this.getCountries());
+    this.continents = overrideContinents ?? (await this.getContinents());
     this.remainings = Array.from(this.countries.keys());
+    this.total = this.countries.length;
   }
 
   private panToCountry(c: Country) {
@@ -123,8 +143,35 @@ export class GameState {
 
   reset() {
     this.currentIndex = -1;
+    this.continent = undefined;
+    this.total = this.countries.length;
     this.remainings = Array.from(this.countries.keys());
     this.showAll = true;
     this.won = false;
+  }
+
+  selectContinent(continent: Continent | undefined) {
+    this.selectingContinent = false;
+    if (continent == undefined) {
+      this.remainings = Array.from(this.countries.keys());
+      this.total = this.countries.length;
+      this.continent = undefined;
+      return;
+    }
+    // find country ids that are part of the continent
+    const ids = [];
+    for (let i = 0; i < this.countries.length; i++) {
+      const country = this.countries[i];
+      if (country?.code && continent.countries.indexOf(country.code) != -1) {
+        ids.push(i);
+      }
+    }
+    this.remainings = ids;
+    this.total = ids.length;
+    this.continent = continent.name;
+  }
+
+  gotoSelectContinent() {
+    this.selectingContinent = true;
   }
 }

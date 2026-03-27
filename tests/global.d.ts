@@ -14,12 +14,19 @@ interface E2ECountry {
   p3: { x: number; y: number };
 }
 
+interface E2EContinent {
+  code: string;
+  name: string;
+  countries: string[];
+}
+
 declare global {
   interface Window {
     /** MapLibre map instance exposed by GlobeMap for test access. */
     __maplibreMap?: MapLibreMap;
     /** Override country list injected by Playwright before game init. */
     __e2e_countries__?: E2ECountry[];
+    __e2e_continents__?: E2EContinent[];
   }
 }
 

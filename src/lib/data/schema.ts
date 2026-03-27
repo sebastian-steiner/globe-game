@@ -11,6 +11,12 @@ export interface Country {
   p3: Point;
 }
 
+export interface Continent {
+  code: string;
+  name: string;
+  countries: string[];
+}
+
 export interface Region {
   code: number;
   name: string;
