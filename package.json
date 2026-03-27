@@ -15,7 +15,8 @@
     "test": "npm run test:unit -- --run",
     "test:e2e": "playwright test",
     "lint": "prettier --check . && eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "prepare:data": "node ./prep/fetch-countries.ts"
   },
   "engines": {
     "node": "^25"
@@ -29,11 +30,14 @@
     "@sveltejs/kit": "^2.50.2",
     "@sveltejs/vite-plugin-svelte": "^6.2.4",
     "@types/node": "^24",
+    "@types/pg": "^8.20.0",
     "@vitest/browser-playwright": "^4.0.18",
+    "dotenv": "^17.3.1",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-svelte": "^3.14.0",
     "globals": "^17.3.0",
+    "pg": "^8.20.0",
     "playwright": "^1.58.1",
     "prettier": "^3.8.1",
     "prettier-plugin-svelte": "^3.4.1",

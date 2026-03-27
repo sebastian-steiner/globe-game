@@ -1,7 +1,7 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
 import type { Map as MapLibreMap } from 'maplibre-gl';
-import type { Country } from '$lib/data';
+import type { Continent, Country } from '$lib/data';
 
 declare global {
   namespace App {
@@ -18,6 +18,7 @@ declare global {
     __maplibreMap?: MapLibreMap;
     /** Override country list injected by Playwright tests. */
     __e2e_countries__?: Country[];
+    __e2e_continents__?: Continent[];
   }
 }
 

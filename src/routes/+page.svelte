@@ -8,6 +8,7 @@
   import ActionBar from '$lib/components/ActionBar.svelte';
   import WinScreen from '$lib/components/WinScreen.svelte';
   import zoomFitIcon from '$lib/assets/zoom-fit.svg';
+  import SelectContinentScreen from '$lib/components/SelectContinentScreen.svelte';
 
   const game = new GameState();
 
@@ -35,7 +36,7 @@
 </script>
 
 <!-- ─── Header ────────────────────────────────────────────────────────── -->
-<GameHeader remaining={game.remainings.length} total={game.countries.length} />
+<GameHeader remaining={game.remainings.length} total={game.total} />
 
 <!-- ─── Globe ─────────────────────────────────────────────────────────── -->
 <div class="globe-region" data-testid="globe-region">
@@ -58,20 +59,30 @@
   {/if}
 
   {#if game.won}
-    <WinScreen total={game.countries.length} onplayagain={() => game.reset()} />
+    <WinScreen total={game.total} continent={game.continent} onplayagain={() => game.reset()} />
+  {/if}
+
+  {#if game.isSelectingContinent}
+    <SelectContinentScreen
+      continents={game.continents}
+      onselect={(continent) => game.selectContinent(continent)}
+    />
   {/if}
 </div>
 
 <!-- ─── Solution strip ────────────────────────────────────────────────── -->
-<SolutionBar name={game.country.name} revealed={game.showAll} started={game.started} />
+{#if !game.isSelectingContinent}
+  <SolutionBar name={game.country.name} revealed={game.showAll} started={game.started} />
 
-<!-- ─── Action bar ────────────────────────────────────────────────────── -->
-<ActionBar
-  idle={game.idle}
-  guessing={game.guessing}
-  revealed={game.revealed}
-  onstart={() => game.start()}
-  onreveal={() => game.reveal()}
-  oncorrect={() => game.correct()}
-  onwrong={() => game.wrong()}
-/>
+  <!-- ─── Action bar ────────────────────────────────────────────────────── -->
+  <ActionBar
+    idle={game.idle}
+    guessing={game.guessing}
+    revealed={game.revealed}
+    onstart={() => game.start()}
+    onreveal={() => game.reveal()}
+    oncorrect={() => game.correct()}
+    onwrong={() => game.wrong()}
+    onselectcontinent={() => game.gotoSelectContinent()}
+  />
+{/if}
