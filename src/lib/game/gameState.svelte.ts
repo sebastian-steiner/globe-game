@@ -1,3 +1,4 @@
+import { asset } from '$app/paths';
 import type { Continent, Country } from '$lib/data';
 import maplibregl from 'maplibre-gl';
 
@@ -60,12 +61,12 @@ export class GameState {
   }
 
   async getCountries(): Promise<Country[]> {
-    const res = await fetch('/data/countries.json');
+    const res = await fetch(asset('/data/countries.json'));
     return (await res.json()) as Country[];
   }
 
   async getContinents() {
-    const res = await fetch('/data/continents.json');
+    const res = await fetch(asset('/data/continents.json'));
     return (await res.json()) as Continent[];
   }
 
