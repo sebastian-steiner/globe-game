@@ -208,7 +208,8 @@ body {
 }
 
 .btn-start,
-.btn-again {
+.btn-again,
+.btn-goto-select-continent {
   background: var(--color-primary);
 }
 
